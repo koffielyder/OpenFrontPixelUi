@@ -1,101 +1,209 @@
+'use client';
 import Image from "next/image";
+import Button from "./components/Button";
+import Table from "./components/Table";
+import UiWindow from "./components/UiWindow";
+import PlayerStats from "./components/PlayerStats";
+import EventLog from "./components/EventLog";
+import React from "react";
+import Requests from "./components/Requests";
+import { BOT_NAME_PREFIXES, BOT_NAME_SUFFIXES } from "./utils/BotNames";
+import PlayerInfoDialog from "./components/PlayerInfoDialog";
+
+
+export interface Player {
+  name: string;
+  area: number;
+  population: string | number;
+  gold: string | number;
+  ports: number;
+  cities: number;
+  isTraitor: boolean;
+  hasEmbargo: boolean;
+  nukesSent: number;
+}
+
+interface Event {
+  message: string;
+  type: 'info' | 'warning' | 'success' | 'danger';
+  priority?: number;
+}
+
+interface Request {
+  title: string;
+  subTitle: string;
+  message: string;
+}
+
+// const dummyPlayers = [
+//   { name: 'General_Maximus_Decimus_Meridius', score: 1000 },
+//   { name: 'Warlord_Genghis_Khan', score: 900 },
+//   { name: 'Emperor_Napoleon_Bonaparte', score: 800 },
+//   { name: 'King_Leonidas_of_Sparta', score: 700 },
+//   { name: 'Queen_Boudica_of_the_Iceni', score: 600 },
+//   { name: 'Pharaoh_Ramesses_the_Great', score: 500 },
+//   { name: 'Sultan_Suleiman_the_Magnificent', score: 400 },
+//   { name: 'Shogun_Tokugawa_Ieyasu', score: 300 },
+//   { name: 'Czar_Peter_the_Great', score: 200 },
+// ];
+
+const dummyEvents: Event[] = [
+  { message: '{player} declined your alliance request', type: 'warning', priority: 2 },
+  { message: '{player} accepted your alliance request', type: 'success', priority: 2 },
+  { message: '{player} broke their alliance with you', type: 'danger', priority: 3 },
+  { message: 'Conquered {player} recieved 100k gold', type: 'success', priority: 1 },
+  { message: 'Captured port from {player}', type: 'success', priority: 1 },
+  { message: 'Captured city from {player}', type: 'success', priority: 1 },
+  { message: 'Captured warship from {player}', type: 'success', priority: 1 },
+  { message: 'Lost port to {player}', type: 'danger', priority: 1 },
+  { message: 'Lost city to {player}', type: 'danger', priority: 1 },
+  { message: 'Warship destroyed by {player}', type: 'danger', priority: 1 },
+
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [showPlayerInfo, setShowPlayerInfo] = React.useState<boolean>(true);
+  const [events, setEvents] = React.useState<Event[]>([]);
+  const [requests, setRequests] = React.useState<Request[]>([]);
+  const [intervalId, setIntervalId] = React.useState<NodeJS.Timeout | null>(null);
+  const [dummyPlayers, setDummyPlayers] = React.useState<Player[]>([]);
+  const [selectedPlayer, setSelectedPlayer] = React.useState<Player | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const generatePlayers = (amount = 4) => {
+    const players: Player[] = [];
+    for (let i = 0; i < amount; i++) {
+      players.push(generatePlayer());
+    }
+    setDummyPlayers(players);
+  };
+
+  const generatePlayer = () => {
+    const prefix = BOT_NAME_PREFIXES[Math.floor(Math.random() * BOT_NAME_PREFIXES.length)];
+    const suffixCount = Math.floor(Math.random() * 3) + 1;
+    const suffixes: string[] = [];
+
+    while (suffixes.length < suffixCount) {
+      const suffix = BOT_NAME_SUFFIXES[Math.floor(Math.random() * BOT_NAME_SUFFIXES.length)];
+      if (!suffixes.includes(suffix)) {
+        suffixes.push(suffix);
+      }
+    }
+
+    const population = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100;
+    const formattedPopulation = population >= 1000000 ? (population / 1000000).toFixed(1) + 'M' : (population / 1000).toFixed(1) + 'K';
+
+    const gold = Math.floor(Math.random() * (10000000 - 100 + 1)) + 100;
+    const formattedGold = gold >= 1000000 ? (gold / 1000000).toFixed(1) + 'M' : (gold / 1000).toFixed(1) + 'K';
+
+    const area = Math.floor(Math.random() * 10);
+    
+    const ports = Math.floor(Math.random() * 16);
+    const cities = Math.floor(Math.random() * 16);
+    const isTraitor = Math.random() < 0.5;
+    const hasEmbargo = Math.random() < 0.1;
+    const nukesSent = Math.random() < 0.7 ? 0 : Math.floor(Math.random() * 20) + 1;
+
+    const player: Player = {
+      name: `${prefix} ${suffixes.join(' ')}`,
+      population: formattedPopulation,
+      gold: formattedGold,
+      area: area,
+      ports: ports,
+      cities: cities,
+      isTraitor: isTraitor,
+      hasEmbargo: hasEmbargo,
+      nukesSent: nukesSent,
+    };
+
+    return player;
+  };
+
+  const randomPlayer = () => {
+    const randomIndex = Math.floor(Math.random() * dummyPlayers.length);
+    return dummyPlayers[randomIndex];
+  }
+
+  const selectRandomPlayer = () => {
+    setSelectedPlayer(randomPlayer());
+  }
+
+  const parseEvent = (event: Event) => {
+    const player = randomPlayer();
+    return { ...event, message: event.message.replace('{player}', player.name) };
+  };
+
+  const sendAllianceRequest = () => {
+    const player = randomPlayer();
+    const request = {
+      title: 'Alliance Request',
+      subTitle: player.name,
+      message: player.name + ' requests an alliance',
+    };
+    setRequests((prevRequests) => [...prevRequests, request]);
+  };
+
+  const randomEvent = () => {
+    const randomIndex = Math.floor(Math.random() * dummyEvents.length);
+    const randomEvent = dummyEvents[randomIndex];
+    setEvents((prevEvents) => [...prevEvents, parseEvent(randomEvent)]);
+  };
+
+  const randomAction = () => {
+    const randomNumber = Math.random();
+    switch (true) {
+      case randomNumber < 0.4:
+        randomEvent();
+        break;
+      case randomNumber < 0.45:
+        sendAllianceRequest();
+        break;
+      default:
+        break;
+    }
+  };
+
+  const toggleRandomEvents = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    } else {
+      const id = setInterval(randomAction, 1000);
+      setIntervalId(id);
+    }
+  };
+
+  
+  React.useEffect(() => {
+    generatePlayers();
+  }, []);
+
+  return (
+    <div className="h-full w-full flex justify-between">
+      <Image src="/ofimage.jpg" width={2000} height={2000} className="fixed top-0 left-0 h-full w-full scale-150 -z-10" alt="image" />
+      <div className="relative z-10 p-4 w-1/5 flex flex-col justify-between gap-4 h-full">
+        <UiWindow title="Player Rankings" childClass="max-h-[30vh]" className="w-full">
+          <Table players={dummyPlayers} />
+        </UiWindow>
+
+        <PlayerStats />
+      </div>
+      <div className="flex flex-col w-1/4 justify-between items-center p-4 relative">
+        <Requests requests={requests} onRequestsChange={(requests) => setRequests(requests)} />
+        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full">
+          { selectedPlayer && <PlayerInfoDialog player={selectedPlayer} open={selectedPlayer !== null} onClose={() => setSelectedPlayer(null)} />}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      <div className="w-1/4 justify-between flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-4">
+          <Button label="Show Player Dialog" onClick={selectRandomPlayer} />
+          <Button label="Random Event" onClick={randomEvent} className="w-full bg-yellow-500 text-white" />
+          <Button label="Alliance Request" onClick={sendAllianceRequest} className="w-full bg-green-500 text" />
+          <Button label={intervalId ? "Stop Random Events" : "Start Random Events"} onClick={toggleRandomEvents} className="w-full bg-red-500 text-white" />
+        </div>
+        <UiWindow title="Event Log" childClass="max-h-[50vh] w-full py-2" background={false} className="flex-col-reverse text-black">
+          <EventLog events={events} />
+        </UiWindow>
+      </div>
     </div>
   );
 }
