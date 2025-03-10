@@ -1,6 +1,6 @@
 import React from 'react';
-import { Player } from '../page';
 import { formatNumber } from '../utils/NumberFormatter';
+import { Player } from '../pages/game';
 
 interface TableProps {
     className?: string;
