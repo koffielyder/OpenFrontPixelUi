@@ -62,7 +62,6 @@ const dummyEvents: Event[] = [
 ];
 
 export default function Home() {
-  const [showPlayerInfo, setShowPlayerInfo] = React.useState<boolean>(true);
   const [events, setEvents] = React.useState<Event[]>([]);
   const [requests, setRequests] = React.useState<Request[]>([]);
   const [intervalId, setIntervalId] = React.useState<NodeJS.Timeout | null>(null);
