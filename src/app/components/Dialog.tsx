@@ -11,7 +11,7 @@ interface DialogProps {
     children: React.ReactNode;
 }
 
-const Dialog: React.FC<DialogProps> = ({ isOpen = false, isCollapsed = false, onCollapse, children, label = "Open", hideLabel = "Hide" }) => {
+const Dialog: React.FC<DialogProps> = ({ isCollapsed = false, onCollapse, children, label = "Open", hideLabel = "Hide" }) => {
     const [collapsed, setCollapsed] = useState(isCollapsed);
 
     const [maxHeight, setMaxHeight] = useState('0px');
