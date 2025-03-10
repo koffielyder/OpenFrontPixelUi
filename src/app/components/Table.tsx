@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player } from './PlayerInfoDialog';
+import { Player } from '../page';
 
 interface TableProps {
     className?: string;
