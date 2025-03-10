@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const PlayerStats: React.FC = () => {
-    const [population, setPopulation] = useState(1200);
-    const [workers, setWorkers] = useState(900);
-    const [troops, setTroops] = useState(300);
+    const [population, setPopulation] = useState(0);
+    const [workers, setWorkers] = useState(0);
+    const [troops, setTroops] = useState(0);
     const [attackRatio, setAttackRatio] = useState(50);
+
+    useEffect(() => {
+        const randomPopulation = Math.floor(Math.random() * 10000) + 1000; // Random number between 1000 and 10000
+        setPopulation(randomPopulation);
+        setWorkers(randomPopulation * 0.75); // Example logic to update workers
+        setTroops(randomPopulation * 0.25); // Example logic to update troops
+    }, []);
 
     const handlePopChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
-        setWorkers(value);
-        setTroops(population - value);
+        setWorkers(population - value);
+        setTroops(value);
     };
 
     const handleAttackRatioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,14 +53,14 @@ const PlayerStats: React.FC = () => {
                 <div className="flex flex-col gap-2 w-full">
                     <div className="items-center space-x-4 flex justify-between">
                         <p className="text-green-200 pixel-number flex gap-2 p-2 align-middle pixel-shadow items-center text-center bg-green-800 shadow-green-950">
-                            Workers: {workers}
+                            Workers: {workers.toFixed(0)}
                         </p>
 
                         <p className="text-red-200 pixel-number flex gap-2 p-2 align-middle pixel-shadow items-center text-center bg-red-800 shadow-red-950">
-                            Troops: {troops}
+                            Troops: {troops.toFixed(0)}
                         </p>
                     </div>
-                    <input type="range" min="0" max={population} value={workers} className="pixel-range" onInput={handlePopChange} />
+                    <input type="range" min="0" max={population} value={troops} className="pixel-range" onInput={handlePopChange} />
                 </div>
 
                 <div className="bg-gray-800 w-full h-1 pixel-shadow"></div>
