@@ -29,10 +29,11 @@ const UiWindow: React.FC<UiWindowProps> = ({ title, subTitle, children, classNam
     };
 
     return (
-        <div className={`flex flex-col ${className} theme-container overflow-hidden ${!isOpen ? 'hidden ' : ''}`}>
-            <div className={`flex gap-4 text-xl font-bold text-white bg-gradient-to-br from-green-600/60 to-black/30`}>
+        <div className={`flex flex-col ${className} ${background ? 'bg-gray-800 pixel-shadow ' : ''} ${!isOpen ? 'hidden ' : ''}`}>
+            <div className={`flex gap-4 font-mono text-xl bg-gray-800 font-bold text-white  ${!background && 'pixel-shadow'}`}>
                 {hidable ? (
                     <label className="cursor-pointer flex gap-4 w-full p-4 items-center">
+                        <input type="checkbox" id="toggle-rankings" className="pixel-checkbox" onChange={toggleVisible} checked={isVisible} />
                         <div>
                             <span>{title}</span>
 
@@ -42,7 +43,6 @@ const UiWindow: React.FC<UiWindowProps> = ({ title, subTitle, children, classNam
                                 </div>
                             )}
                         </div>
-                        <input type="checkbox" id="toggle-rankings" className="opacity-0" onChange={toggleVisible} checked={isVisible} />
                     </label>
                 ) : (
                     <label className="flex justify-between w-full p-4">{title}</label>

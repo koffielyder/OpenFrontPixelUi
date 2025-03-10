@@ -10,15 +10,17 @@ interface ButtonProps {
 }
 
 
-const Button: React.FC<ButtonProps> = ({ onClick = () => {}, label = "", disabled = false, className = '', children = null, tooltip = "" }) => {
+const Button: React.FC<ButtonProps> = ({ onClick = () => { }, label = "", disabled = false, className = '', children = null, tooltip = "" }) => {
     return (
         <button onClick={onClick} title={tooltip} disabled={disabled} className={`
-            relative cursor-pointer border-black/20 border-r-4 border-b-4 px-3 py-1 
-            bg-blue-600 shadow-[4px_4px_0px_rgba(0,0,0,1)] text-white font-mono 
-            active:translate-y-1 active:translate-x-1 active:shadow-none transition-all
+            relative cursor-pointer  px-4 py-1 
+            bg-blue-600 text-white rounded-full transition-all overflow-hidden group
             ${className}
         `}>
-            {children ? children : label}
+            <div className='absolute left-0 top-0 w-full h-full bg-gradient-to-br from-gray-700/50 to-gray-700/20 group-hover:bg-black/20 transition-all'></div>
+            <span className='relative'>
+                {children ? children : label}
+            </span>
         </button>
     );
 };

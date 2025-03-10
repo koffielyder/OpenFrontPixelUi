@@ -1,17 +1,16 @@
 import React from 'react';
-
-interface Event {
-    message: string;
-    type: 'info' | 'warning' | 'success' | 'danger';
-    priority?: number;
-  }
+import { Event } from '../pages/game';
 
 interface EventLogProps {
     events: Event[];
+    newEvents: Event[];
+    className?: string;
+    showAll?: boolean;
 }
 
-const EventLog: React.FC<EventLogProps> = ({ events = [] }) => {
+const EventLog: React.FC<EventLogProps> = ({ events = [], newEvents = [], className = '', showAll = false }) => {
     const [isUserScrolling, setIsUserScrolling] = React.useState(false);
+    const [shouldShowAll, setShowAll] = React.useState(showAll);
     const eventLogRef = React.useRef<HTMLDivElement>(null);
 
     const getEventClass = (event: Event) => {
@@ -20,16 +19,17 @@ const EventLog: React.FC<EventLogProps> = ({ events = [] }) => {
             ${getEventPrioClass(event.priority)}
         `;
     };
+
     const getEventTypeClass = (type: string, prio: number) => {
         switch (type) {
             case 'info':
-                return `${prio === 1 ? 'shadow-blue-900 bg-blue-600/50' : 'shadow-blue-900 bg-blue-600'} text-xs py-1`;
+                return `${prio === 1 ? 'shadow-blue-900 bg-blue-600/30' : 'shadow-blue-900 bg-blue-600/50'} text-xs py-1`;
             case 'warning':
-                return `${prio === 1 ? 'shadow-yellow-900 bg-yellow-600/50' : 'shadow-yellow-900 bg-yellow-600'} text-md font-bold py-2`;
+                return `${prio === 1 ? 'shadow-yellow-900 bg-yellow-600/30' : 'shadow-yellow-900 bg-yellow-600/50'} text-md font-bold py-2`;
             case 'success':
-                return `${prio === 1 ? 'shadow-green-900 bg-green-600/50' : 'shadow-green-900 bg-green-600'} text-md font-bold py-2`;
+                return `${prio === 1 ? 'shadow-green-900 bg-green-600/30' : 'shadow-green-900 bg-green-600/50'} text-md font-bold py-2`;
             case 'danger':
-                return `${prio === 1 ? 'shadow-red-900 bg-red-600/50' : 'shadow-red-900 bg-red-600'} text-md font-bold py-2`;
+                return `${prio === 1 ? 'shadow-red-900 bg-red-600/30' : 'shadow-red-900 bg-red-600/50'} text-md font-bold py-2`;
             default:
                 return '';
         }
@@ -48,12 +48,7 @@ const EventLog: React.FC<EventLogProps> = ({ events = [] }) => {
         }
     };
 
-    React.useEffect(() => {
-        if (!isUserScrolling && eventLogRef.current) {
-            eventLogRef.current.scrollTop = eventLogRef.current.scrollHeight;
-        }
-    }, [events, isUserScrolling]);
-
+    
     const handleScroll = () => {
         if (eventLogRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = eventLogRef.current;
@@ -65,20 +60,31 @@ const EventLog: React.FC<EventLogProps> = ({ events = [] }) => {
         }
     };
 
-    return (
-        <div className='relative flex h-full'>
+    const toggleShowAll = () => {
+        setShowAll(!shouldShowAll);
+    }
 
+    React.useEffect(() => {
+        if (!isUserScrolling && eventLogRef.current) {
+            eventLogRef.current.scrollTop = eventLogRef.current.scrollHeight;
+        }
+    }, [events, isUserScrolling]);
+
+
+    return (
+        <div className={`relative flex flex-col gap-2 ${className}`}>
             <div
                 ref={eventLogRef}
                 onScroll={handleScroll}
-                className="flex flex-col gap-3 overflow-auto h-full pixel-scrollbar px-4 py-2 relative"
+                className="flex flex-col gap-3 overflow-auto h-full px-4 relative w-full"
             >
-                {events.map((event, index) => (
-                    <p key={index} className={`font-mono pixel-shadow px-4 ${getEventClass(event)}`}>
+                {(shouldShowAll ? events : newEvents).slice(Math.max(newEvents.length - (!shouldShowAll ? 5 : newEvents.length), 0)).map((event, index) => (
+                    <p key={index} className={`theme-container px-4 ${getEventClass(event)}`}>
                         {event.message}
                     </p>
                 ))}
             </div>
+            <button className='text-right' onClick={toggleShowAll}>{shouldShowAll ? 'Hide' : 'Show event log'}</button>
         </div>
     );
 };

@@ -1,7 +1,5 @@
-@import "tailwindcss";
-
-@tailwind base;
-@tailwind components;
+@use "tailwindcss";
+@use './themes/themes'; // Import all theme SCSS files
 @tailwind utilities;
 
 :root {
@@ -30,10 +28,11 @@ body {
 }
 
 
-
 /* Pixel shadow border */
 
-.pixel-shadow {
+
+
+/* .pixel-shadow {
   box-shadow: 4px 4px 0px var(--tw-shadow-color, rgba(0, 0, 0, 1));
   @apply mr-1 mb-1 relative z-10 border-b-4 border-r-4 border-white/20;
 }
@@ -68,12 +67,12 @@ body {
 .pixel-divider-large {
   @apply h-[4px] mb-1;
   box-shadow: 4px 4px 0px var(--tw-shadow-color, black);
-}
+} */
 
 
 /* Pixel checkbox */
 
-.pixel-checkbox {
+/* .pixel-checkbox {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
@@ -89,12 +88,12 @@ body {
   background-color: #00cc66;
   transform: translateY(2px) translateX(2px);
   box-shadow: 2px 2px 0px black;
-}
+} */
 
 
 /* Pixel scrollbar */
 
-.pixel-scrollbar {
+/* .pixel-scrollbar {
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -111,15 +110,14 @@ body {
 }
 
 .pixel-scrollbar::-webkit-scrollbar-thumb {
-  /* background: #ffcc00; */
   background: #786bec;
   border: 4px solid black;
-}
+} */
 
 
 /* Pixel input range */
 
-.pixel-range {
+/* .pixel-range {
   appearance: none;
   width: 100%;
   height: 12px;
@@ -137,4 +135,4 @@ body {
   border: 4px solid black;
   box-shadow: 4px 4px 0px black;
   cursor: pointer;
-}
+} */

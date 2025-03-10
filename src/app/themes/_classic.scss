@@ -1,0 +1,47 @@
+:root {
+  /* Define CSS variables for theming */
+  --border-color: theme('colors.blue.500');
+  --border-style: solid;
+  --border-width: 4px;
+  --border-shadow: none;
+  --border-animation: none;
+}
+/* Add custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+@layer components {
+  .theme-border {
+    /* Apply them using standard CSS properties */
+    border: var(--border-width) var(--border-style) var(--border-color);
+    box-shadow: var(--border-shadow);
+    transition: var(--border-animation);
+  }
+  .theme-container {
+    @apply bg-gray-900/60 rounded-lg backdrop-blur-md;
+  }
+  
+  .theme-stat-box {
+    @extend .theme-container;
+    @apply grid grid-rows-[2fr_1fr_2fr];
+    @apply items-center p-2 py-4 text-center;
+    @apply bg-transparent bg-gradient-to-br from-gray-900/60 via-[var(--tw-gradient-from)] via-[percentage:20%] to-gray-900/50;
+  }
+}
+

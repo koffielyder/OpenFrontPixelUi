@@ -34,7 +34,7 @@ const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange }) 
                     startVisible={currentRequests.length === 1}
                     title={request.title}
                     subTitle={request.subTitle}
-                    childClass="max-h-[30vh]"
+                    childClass="max-h-[30vh] bg-gray-700"
                     className="w-full"
                 >
                     <div className="flex flex-col items-center justify-center gap-4 p-4">

@@ -1,0 +1,16 @@
+.theme-future {
+    --border-color: theme('colors.red.400');
+    --border-style: solid;
+    --border-width: 4px;
+    --border-shadow: 0 0 10px var(--border-color), 0 0 20px var(--border-color);
+    --border-animation: glowing-border 1.5s infinite alternate;
+}
+
+@keyframes glowing-border {
+    from {
+        box-shadow: 0 0 5px var(--border-color), 0 0 15px var(--border-color);
+    }
+    to {
+        box-shadow: 0 0 10px var(--border-color), 0 0 25px var(--border-color);
+    }
+}
