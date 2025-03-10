@@ -68,7 +68,7 @@ export default function Home() {
   const [dummyPlayers, setDummyPlayers] = React.useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = React.useState<Player | null>(null);
 
-  const generatePlayers = (amount = 4) => {
+  const generatePlayers = (amount = 6) => {
     const players: Player[] = [];
     for (let i = 0; i < amount; i++) {
       players.push(generatePlayer());
