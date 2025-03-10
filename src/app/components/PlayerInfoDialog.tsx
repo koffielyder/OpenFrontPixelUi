@@ -2,7 +2,7 @@ import React from 'react';
 import UiWindow from './UiWindow';
 import Button from './Button';
 import Image from 'next/image';
-import { Player } from '../page';
+import { Player } from '../pages/game';
 
 
 interface PlayerInfoDialogProps {
