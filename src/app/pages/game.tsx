@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Table from '../components/Table';
 import { BOT_NAME_PREFIXES, BOT_NAME_SUFFIXES } from '../utils/BotNames';
 import Dialog from '../components/Dialog';

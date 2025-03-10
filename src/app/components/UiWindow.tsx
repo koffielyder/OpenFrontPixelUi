@@ -15,7 +15,7 @@ interface UiWindowProps {
     onClose?: () => void;
 }
 
-const UiWindow: React.FC<UiWindowProps> = ({ title, subTitle, children, className, childClass = "", hidable = true, closable = false, background = true, startVisible = true, onClose, isOpen = true }) => {
+const UiWindow: React.FC<UiWindowProps> = ({ title, subTitle, children, className, childClass = "", hidable = true, closable = false, startVisible = true, onClose, isOpen = true }) => {
     const [isVisible, setIsVisible] = useState(startVisible);
 
     const toggleVisible = () => {
