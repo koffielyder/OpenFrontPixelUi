@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Player } from '../pages/game';
+import { Player } from '../interfaces/interfaces';
 import { formatNumber } from '../utils/NumberFormatter';
 
 interface PlayerStatsProps {

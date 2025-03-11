@@ -1,40 +1,21 @@
 import React, { useEffect } from 'react';
 import Table from '../components/Table';
 import { BOT_NAME_PREFIXES, BOT_NAME_SUFFIXES } from '../utils/BotNames';
-import Dialog from '../components/Dialog';
-import PlayerStats from '../components/PlayerStats';
-import EventLog from '../components/EventLog';
 import Button from '../components/Button';
 import Requests from '../components/Requests';
 import PlayerInfoDialog from '../components/PlayerInfoDialog';
-
-export interface Player {
-    name: string;
-    area: number;
-    population: number;
-    maxPopulation: number;
-    gold: number;
-    ports: number;
-    cities: number;
-    isTraitor: boolean;
-    hasEmbargo: boolean;
-    nukesSent: number;
-    workers: number;
-    troops: number;
-    attackRatio: number;
-}
-
-export interface Event {
-    message: string;
-    type: 'info' | 'warning' | 'success' | 'danger';
-    priority?: number;
-}
+import { Event, Front, Player } from '../interfaces/interfaces';
+import Dialog from '../components/Dialog';
+import PlayerStats from '../components/PlayerStats';
+import Fronts from '../components/Fronts';
+import EventLog from '../components/EventLog';
 
 interface Request {
     title: string;
     subTitle: string;
     message: string;
 }
+
 
 const dummyEvents: Event[] = [
     { message: '{player} declined your alliance request', type: 'warning', priority: 2 },
@@ -60,7 +41,18 @@ const Game: React.FC = () => {
     const [requests, setRequests] = React.useState<Request[]>([]);
     const [intervalId, setIntervalId] = React.useState<NodeJS.Timeout | null>(null);
 
-    const generatePlayers = (amount = 6) => {
+    const [fronts, setFronts] = React.useState<Front[]>([]);
+
+    const generateFront = () => {
+        const front: Front = {
+            player: randomPlayer(),
+            incoming: Math.floor(Math.random() * 100),
+            outgoing: Math.floor(Math.random() * 100),
+        }
+        setFronts((prevFronts) => [...prevFronts, front]);
+    }
+
+    const generatePlayers = (amount = 10) => {
         const players: Player[] = [];
         for (let i = 0; i < amount; i++) {
             players.push(generatePlayer());
@@ -89,6 +81,9 @@ const Game: React.FC = () => {
         const isTraitor = Math.random() < 0.5;
         const hasEmbargo = Math.random() < 0.1;
         const nukesSent = Math.random() < 0.7 ? 0 : Math.floor(Math.random() * 20) + 1;
+        // const isAlly = Math.random() < 0.2;
+        const isAlly = false;
+        const expires = Math.floor(Math.random() * 151) + 50;
 
         const player: Player = {
             name: `${prefix} ${suffixes.join(' ')}`,
@@ -104,6 +99,7 @@ const Game: React.FC = () => {
             troops: population,
             workers: 0,
             attackRatio: 20,
+            alliance: { isAlly: isAlly, pending: false, level: Math.round(Math.random() * 3), gold: gold, expires: expires },
         };
 
         return player;
@@ -114,13 +110,13 @@ const Game: React.FC = () => {
         return dummyPlayers[randomIndex];
     }
 
-    // const selectRandomPlayer = () => {
-    //     setSelectedPlayer(randomPlayer());
-    // }
+    const selectRandomPlayer = () => {
+        setSelectedPlayer(randomPlayer());
+    }
 
     const parseEvent = (event: Event) => {
         const player = randomPlayer();
-        if(player) return { ...event, message: event.message.replace('{player}', player.name) };
+        if (player) return { ...event, message: event.message.replace('{player}', player.name) };
         return event;
     };
 
@@ -175,24 +171,76 @@ const Game: React.FC = () => {
     useEffect(() => {
         generatePlayers();
     }, []);
-    
+
 
     return (
-        <div className='flex relative w-full h-full justify-between'>
-            <div className="w-1/4 h-full flex flex-col justify-between">
+        <div className='relative w-full h-full flex flex-col gap-16'>
+            {selectedPlayer && <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full h-full z-20 flex justify-center items-center">
+                {selectedPlayer && <PlayerInfoDialog player={selectedPlayer} open={selectedPlayer !== null} onClose={() => setSelectedPlayer(null)} />}
+            </div>}
+            <div className='h-1/2 relative w-full h-full justify-between grid grid-cols-[1fr_2fr_1fr] grid-rows-1 gap-4 max-h-1/2'>
+                <div id='container-top-left' className="h-full w-full">
+                    <Dialog>
+                        <Table players={dummyPlayers} className='max-h-full' />
+                    </Dialog>
+                </div>
+
+                <div id='container-top-middle' className="h-1/2">
+                    <Requests requests={requests} onRequestsChange={(requests) => setRequests(requests)} />
+                </div>
+
+                <div id='container-top-right' className="h-full w-full">
+                    <div className='w-full gap-4 grid grid-cols-2 p-4'>
+                        <Button onClick={randomEvent} className='bg-yellow-400' >
+                            Random Event
+                        </Button>
+
+                        <Button onClick={sendAllianceRequest} className='bg-green-400' >
+                            Alliance request
+                        </Button>
+
+                        <Button onClick={toggleRandomEvents} className='bg-red-400' >
+                            [{!intervalId ? 'off' : 'on'}] Toggle random events
+                        </Button>
+
+                        <Button onClick={selectRandomPlayer}>
+                            Open player dialog
+                        </Button>
+                        <Button label='generateFront' onClick={generateFront} />
+                        
+
+                    </div>
+                </div>
+            </div>
+            <div className="h-1/2 relative w-full h-full justify-between grid grid-cols-3 grid-cols-[2fr_2fr_1fr] gap-4 items-end">
+
+                <div id="container-bottom-left" className="h-full w-full flex items-end">
+                    {currentPlayer && <PlayerStats player={currentPlayer} onPlayerChange={(player: Player) => setCurrentPlayer(player)} />}
+                    <Fronts fronts={fronts} />
+                </div>
+
+                <div id="container-bottom-middle" className="h-1/2">
+
+                </div>
+
+                <div id="container-bottom-right" className="h-full w-full flex items-end">
+                    <EventLog className='max-h-[40vh] w-full' events={events} newEvents={newEvents} showAll={false} />
+                </div>
+            </div>
+            {/* <div className="w-1/4 h-full flex flex-col justify-between">
                 <Dialog label="Leaderboard">
-                    <Table players={dummyPlayers} />
+                    <Table players={dummyPlayers} className='max-h-[30vh]' />
                 </Dialog>
                 {currentPlayer && <PlayerStats player={currentPlayer} onPlayerChange={(player: Player) => setCurrentPlayer(player)} />}
             </div>
-            <div className="w-1/4 h-full flex flex-col justify-between">
+            <div className="w-1/4 h-full flex flex-col justify-between relative">
                 <Requests requests={requests} onRequestsChange={(requests) => setRequests(requests)} />
                 <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full">
                     {selectedPlayer && <PlayerInfoDialog player={selectedPlayer} open={selectedPlayer !== null} onClose={() => setSelectedPlayer(null)} />}
                 </div>
             </div>
             <div className="w-1/4 h-full flex flex-col justify-between">
-                <div className='w-full gap-4 grid grid-cols-2'>
+                <div className='w-full gap-4 grid grid-cols-2 p-4'>
                     <Button onClick={randomEvent} className='bg-yellow-400' >
                         Random Event
                     </Button>
@@ -204,9 +252,14 @@ const Game: React.FC = () => {
                     <Button onClick={toggleRandomEvents} className='bg-red-400' >
                         [{!intervalId ? 'off' : 'on'}] Toggle random events
                     </Button>
+
+                    <Button onClick={selectRandomPlayer}>
+                        Open player dialog
+                    </Button>
+
                 </div>
                 <EventLog className='max-h-[40vh] w-full' events={events} newEvents={newEvents} showAll={false} />
-            </div>
+            </div> */}
         </div>
     );
 };

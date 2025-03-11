@@ -1,5 +1,5 @@
 import React from 'react';
-import { Event } from '../pages/game';
+import { Event } from '../interfaces/interfaces';
 
 interface EventLogProps {
     events: Event[];

@@ -11,9 +11,10 @@ interface Request {
 interface RequestsProps {
     requests: Request[];
     onRequestsChange: (newRequests: Request[]) => void;
+    className?: string;
 }
 
-const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange }) => {
+const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange, className = "" }) => {
     const [currentRequests, setCurrentRequests] = useState(requests);
 
     useEffect(() => {
@@ -27,7 +28,7 @@ const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange }) 
     };
 
     return (
-        <div className="flex flex-col gap-4 w-full">
+        <div className={`flex flex-col gap-4 w-full ${className}`}>
             {currentRequests.map((request, index) => (
                 <UiWindow
                     key={index}
@@ -35,7 +36,7 @@ const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange }) 
                     title={request.title}
                     subTitle={request.subTitle}
                     childClass="max-h-[30vh]"
-                    className="w-full"
+                    className={`w-full`}
                 >
                     <div className="flex flex-col items-center justify-center gap-4 p-4">
                         <p className="text-white">{request.message}</p>

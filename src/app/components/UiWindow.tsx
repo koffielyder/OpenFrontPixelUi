@@ -49,7 +49,7 @@ const UiWindow: React.FC<UiWindowProps> = ({ title, subTitle, children, classNam
                 )}
                 {closable && (
                     <div className='p-2'>
-                        <Button onClick={handleClose} className="p-2 text-white bg-red-600 relative">
+                        <Button onClick={handleClose} className="aspect-square text-white bg-red-600/60 relative">
                             x
                         </Button>
                     </div>

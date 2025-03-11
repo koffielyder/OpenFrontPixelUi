@@ -37,11 +37,25 @@
     @apply bg-gray-900/60 rounded-lg backdrop-blur-md;
   }
   
-  .theme-stat-box {
+  .theme-stat-box-base {
     @extend .theme-container;
-    @apply grid grid-rows-[2fr_1fr_2fr];
-    @apply items-center p-2 py-4 text-center;
+    @apply items-center p-2 text-center;
     @apply bg-transparent bg-gradient-to-br from-gray-900/60 via-[var(--tw-gradient-from)] via-[percentage:20%] to-gray-900/50;
+  }
+
+  .theme-stat-box {
+    @extend .theme-stat-box-base;
+    @apply grid grid-rows-[2fr_1fr_2fr] py-4;
+  }
+
+
+  .theme-stat-box-vertical {
+    @extend .theme-stat-box-base;
+    @apply grid grid-cols-[2fr_1fr_2fr] px-4;
+  }
+
+  .disabled {
+    @apply opacity-50 pointer-events-none;
   }
 }
 

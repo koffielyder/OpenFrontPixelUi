@@ -1,92 +1,120 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 interface DialogProps {
-    isOpen?: boolean;
-    isCollapsed?: boolean;
-    onClose?: () => void;
-    onOpen?: () => void;
-    onCollapse?: (isCollapsed: boolean) => void;
-    label?: string;
-    hideLabel?: string;
+    className?: string;
     children: React.ReactNode;
 }
 
-const Dialog: React.FC<DialogProps> = ({ isCollapsed = false, onCollapse, children, label = "Open", hideLabel = "Hide" }) => {
-    const [collapsed, setCollapsed] = useState(isCollapsed);
+const Dialog: React.FC<DialogProps> = ({ className, children }) => {
+    const initStyle: React.CSSProperties = {
+        opacity: 0,
+        pointerEvents: 'none'
+    };
 
-    const [maxHeight, setMaxHeight] = useState('0px');
-    const [maxWidth, setMaxWidth] = useState('0px');
-    const [minWidth, setMinWidth] = useState('0px');
+    const dialogRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLDivElement>(null);
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [originalMaxHeight, setOriginalMaxHeight] = useState<string>();
+    const [originalMaxWidth, setOriginalMaxWidth] = useState<string>();
+    const [isResizing, setIsResizing] = useState(false);
 
-    const contentRef = useRef<HTMLDivElement>(null);
-    const titleHiddenRef = useRef<HTMLDivElement>(null);
-    const titleVisibleRef = useRef<HTMLDivElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const toggleAnimationClasses: React.CSSProperties = {
+        transition: 'all 0.3s ease-in-out'
+    };
 
-    // const handleOpen = () => {
-    //     setOpen(true);
-    //     if (onOpen) {
-    //         onOpen();
-    //     }
-    // };
+    let resizeTimeout: NodeJS.Timeout;
 
-    // const handleClose = () => {
-    //     setOpen(false);
-    //     if (onClose) {
-    //         onClose();
-    //     }
-    // };
+    const resetStyles = (onAnimationFrame: FrameRequestCallback | null | boolean = null) => {
+        if (dialogRef.current) {
+            const resetStyle: React.CSSProperties = {
+                opacity: 1,
+                pointerEvents: 'all',
+                maxWidth: '',
+                maxHeight: '',
+                transition: 'none'
+            };
 
-    const handleCollapse = () => {
-        setCollapsed(!collapsed);
-        if (onCollapse) {
-            onCollapse(collapsed);
+            Object.assign(dialogRef.current.style, resetStyle);
+            if(onAnimationFrame) {
+                let callback: FrameRequestCallback = () => {};
+                if (typeof onAnimationFrame === 'function') {
+                    callback = onAnimationFrame;
+                }
+                requestAnimationFrame(callback);
+            }
+        }
+    }
+
+    const updateDimensions = () => {
+        if (dialogRef.current) {
+            
+            resetStyles(() => {
+                const { offsetWidth, offsetHeight } = dialogRef.current!;
+                console.log(`Width: ${offsetWidth}, Height: ${offsetHeight}`);
+                const resetStyle: React.CSSProperties = {
+                    opacity: 1,
+                    pointerEvents: 'all',
+                    maxWidth: `${offsetWidth}px`,
+                    maxHeight: `${offsetHeight}px`,
+                    transition: toggleAnimationClasses.transition
+                };
+                if(dialogRef.current) {
+                    Object.assign(dialogRef.current.style, resetStyle);
+                    setOriginalMaxHeight(`${offsetHeight}px`);
+                    setOriginalMaxWidth(`${offsetWidth}px`);
+                }
+
+                // Run the next function after styles are applied
+                nextFunction();
+            });
+            // Wait for the next animation frame to ensure styles are applied
         }
     };
 
+    const nextFunction = () => {
+        // Your next function logic here
+    };
+
+    const handleResize = () => {
+        clearTimeout(resizeTimeout);
+        if (isResizing) return;
+        setIsResizing(true);
+        resetStyles(true);
+        resizeTimeout = setTimeout(() => {
+            updateDimensions();
+            setIsResizing(false);
+        }, 100);
+    };
 
     useEffect(() => {
-        if (contentRef.current) {
-            setMaxHeight(`${contentRef.current.scrollHeight}px`);
-        }
-    }, [children]);
+        updateDimensions(); // Get dimensions after rendering
 
-    useEffect(() => {
-        if (containerRef.current) {
-            setMaxWidth(`${containerRef.current.scrollWidth}px`);
-        }
-        if (titleHiddenRef.current) {
-            setMinWidth(`${titleHiddenRef.current.scrollWidth}px`);
-        }
-    }, []); // Empty dependency array to run only once
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeout);
+        };
+    }, []);
 
+    const toggleCollapse = () => {
+        if (dialogRef.current && originalMaxHeight && originalMaxWidth) {
+            setIsCollapsed(!isCollapsed);
+            if (buttonRef.current) {
+                dialogRef.current.style.maxHeight = isCollapsed ? originalMaxHeight : `${buttonRef.current.offsetHeight}px`;
+                dialogRef.current.style.maxWidth = isCollapsed ? originalMaxWidth : `${buttonRef.current.offsetWidth}px`;
+            }
+        }
+    };
 
     return (
-        <div className={`w-full h-max`} ref={containerRef}>
-            <div className='theme-container relative overflow-hidden w-full flex flex-col transition-all duration-300'
-                style={{
-                    maxWidth: !collapsed ? maxWidth : minWidth,
-                }}
-            >
-                <button
-                    className={`bg-black/30 text-left w-full relative h-10 overflow-hidden`}
-                    onClick={handleCollapse}
-                >
-                    <div className={`w-max px-4 py-2 top-0 left-0 absolute ${!collapsed && 'opacity-0'}`} ref={titleHiddenRef}>{label}</div>
-                    <div className={`w-max px-4 py-2 top-0 left-0 absolute ${collapsed && 'opacity-0'}`} ref={titleVisibleRef}>{hideLabel}</div>
-                </button>
-
-                <div
-                    className={`transition-all duration-300 ease-out overflow-hidden`}
-                    style={{ maxHeight: !collapsed ? maxHeight : '0px' }}
-                    ref={contentRef}
-                >
-                    <div className="p-4"
-                        style={{ minWidth: maxWidth, minHeight: maxHeight }}
-                    >
-                        {children}
-                    </div>
-                </div>
+        <div className={`max-h-full max-w-full h-full w-full theme-container flex flex-col ${toggleAnimationClasses} ${className}`} style={initStyle} ref={dialogRef}>
+            <button className='flex justify-center' onClick={toggleCollapse}>
+                <span className='py-2 px-8 w-max flex' ref={buttonRef}>
+                    {isCollapsed ? 'Leaderboard' : 'Collapse'}
+                </span>
+            </button>
+            <div className="flex flex-col gap-2 flex-grow overflow-hidden">
+                {children}
             </div>
         </div>
     );
