@@ -1,4 +1,4 @@
-import React, { use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import UiWindow from './UiWindow';
 import Button from './Button';
 import Image from 'next/image';

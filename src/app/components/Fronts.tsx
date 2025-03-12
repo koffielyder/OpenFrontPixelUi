@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Front, Player } from '../interfaces/interfaces';
+import { Front } from '../interfaces/interfaces';
 import { formatNumber } from '../utils/NumberFormatter';
 import { FrontService } from '../services/FrontService';
 
 interface FrontsProps {
     className?: string;
     fronts: Front[];
-    onFrontChange?: (fronts: Front[]) => void;
     frontService: FrontService;
 }
 
-const Fronts: React.FC<FrontsProps> = ({ className, fronts, onFrontChange = null, frontService }) => {
+const Fronts: React.FC<FrontsProps> = ({ className, fronts, frontService }) => {
 
     const [updatedFronts, setUpdatedFronts] = useState<Front[]>(fronts);
     const incomingValuesRef = React.useRef<number[]>(fronts.map(front => front.incoming));

@@ -65,7 +65,7 @@ export class FrontService {
                 const outgoingReduction = Math.round(front.incoming * 0.10) + 1000;
                 
                 let newIncoming = Math.max(0, Math.round(front.incoming * 0.95) - incomingReduction);
-                let newOutgoing = Math.max(0, Math.round(front.outgoing * 0.95) - outgoingReduction);
+                const newOutgoing = Math.max(0, Math.round(front.outgoing * 0.95) - outgoingReduction);
 
                 const idleTime = (newIncoming === 0 && newOutgoing === 0) ? (front.idleTime || 0) + 1 : 0;
 
