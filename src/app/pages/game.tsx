@@ -164,11 +164,6 @@ const Game: React.FC = () => {
         }
     };
 
-    const onFrontChange = (fronts: Front[]) => {
-        console.log(fronts);
-        setFronts(fronts);
-    }
-
     useEffect(() => {
         generatePlayers();
     }, []);
@@ -224,7 +219,7 @@ const Game: React.FC = () => {
                 </div>
 
                 <div id="container-bottom-middle" className="overflow-hidden h-1/2 flex flex-col justify-end">
-                    <Fronts fronts={fronts} className='h-full' onFrontChange={onFrontChange} frontService={frontService} />
+                    <Fronts fronts={fronts} className='h-full' frontService={frontService} />
                     {/* <GridComponent /> */}
                 </div>
 
