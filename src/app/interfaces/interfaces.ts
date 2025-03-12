@@ -34,4 +34,5 @@ export interface Front {
     player: Player;
     incoming: number;
     outgoing: number;
+    idleTime?: number;
 }

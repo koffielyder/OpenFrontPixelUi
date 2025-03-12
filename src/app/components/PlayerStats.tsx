@@ -33,7 +33,7 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
     return (
         <div id="player-stats" className='flex flex-col gap-4 max-w-sm'>
             <div className="gap-4 w-full grid grid-cols-4">
-                <div className='theme-stat-box !from-cyan-900/60'>
+                <div className='theme-stat-box px-4 !from-cyan-900/60'>
                     <div className='flex flex-col items-center text-center'>
                         <span>Pop</span>
                         <span className='text-xs text-green-600'>+150</span>
@@ -44,7 +44,7 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
                         <span className='text-xs text-right'>/ {formatNumber(currentPlayer.maxPopulation)}</span>
                     </div>
                 </div>
-                <div className='theme-stat-box !from-yellow-900/60'>
+                <div className='theme-stat-box px-4 !from-yellow-900/60'>
                     <div className='flex flex-col items-center text-center'>
                         <span>Gold</span>
                         <span className='text-xs text-green-600'>+76</span>
@@ -52,12 +52,12 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
                     <span className="bg-white h-[1px] opacity-30 w-3/4 mx-auto"></span>
                     <span>{formatNumber(currentPlayer.gold)}</span>
                 </div>
-                <div className={`theme-stat-box !from-blue-900/60 ${!currentPlayer.ports && 'opacity-50'}`}>
+                <div className={`theme-stat-box px-4 !from-blue-900/60 ${!currentPlayer.ports && 'opacity-50'}`}>
                     <span>Ports</span>
                     <span className="bg-white h-[1px] opacity-30 w-3/4 mx-auto"></span>
                     <span>{currentPlayer.ports}</span>
                 </div>
-                <div className={`theme-stat-box !from-green-900/60 ${!currentPlayer.cities && 'opacity-50'}`}>
+                <div className={`theme-stat-box px-4 !from-green-900/60 ${!currentPlayer.cities && 'opacity-50'}`}>
                     <span>Cities</span>
                     <span className="bg-white h-[1px] opacity-30 w-3/4 mx-auto"></span>
                     <span>{currentPlayer.cities}</span>

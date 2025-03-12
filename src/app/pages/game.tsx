@@ -9,6 +9,7 @@ import Dialog from '../components/Dialog';
 import PlayerStats from '../components/PlayerStats';
 import Fronts from '../components/Fronts';
 import EventLog from '../components/EventLog';
+import { get } from 'http';
 
 interface Request {
     title: string;
@@ -40,17 +41,38 @@ const Game: React.FC = () => {
 
     const [requests, setRequests] = React.useState<Request[]>([]);
     const [intervalId, setIntervalId] = React.useState<NodeJS.Timeout | null>(null);
-
     const [fronts, setFronts] = React.useState<Front[]>([]);
 
     const generateFront = () => {
+        const player = randomPlayer();
         const front: Front = {
-            player: randomPlayer(),
-            incoming: Math.floor(Math.random() * 100),
+            player: player,
+            incoming: getTroopSize(player),
             outgoing: Math.floor(Math.random() * 100),
         }
         setFronts((prevFronts) => [...prevFronts, front]);
     }
+
+
+
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setFronts((prevFronts) => prevFronts.map((front) => ({
+    //             ...front,
+    //             incoming: Math.round(Math.max(0, front.incoming *.95)),
+    //             outgoing: Math.round(Math.max(0, front.outgoing *.95)),
+    //         })));
+    //     }, 1000);
+
+    //     return () => clearInterval(interval);
+    // }, []);
+
+    const getTroopSize = (player: Player) => {
+        return player.troops * (player.attackRatio / 100);
+    }
+
+
+
 
     const generatePlayers = (amount = 10) => {
         const players: Player[] = [];
@@ -174,11 +196,11 @@ const Game: React.FC = () => {
 
 
     return (
-        <div className='relative w-full h-full flex flex-col gap-16'>
+        <div className='relative w-full h-full grid grid-rows-2 gap-16'>
             {selectedPlayer && <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full h-full z-20 flex justify-center items-center">
                 {selectedPlayer && <PlayerInfoDialog player={selectedPlayer} open={selectedPlayer !== null} onClose={() => setSelectedPlayer(null)} />}
             </div>}
-            <div className='h-1/2 relative w-full h-full justify-between grid grid-cols-[1fr_2fr_1fr] grid-rows-1 gap-4 max-h-1/2'>
+            <div className='relative w-full h-full justify-between grid grid-cols-[1fr_2fr_1fr] grid-rows-1 gap-4'>
                 <div id='container-top-left' className="h-full w-full">
                     <Dialog>
                         <Table players={dummyPlayers} className='max-h-full' />
@@ -207,20 +229,17 @@ const Game: React.FC = () => {
                             Open player dialog
                         </Button>
                         <Button label='generateFront' onClick={generateFront} />
-                        
-
                     </div>
                 </div>
             </div>
-            <div className="h-1/2 relative w-full h-full justify-between grid grid-cols-3 grid-cols-[2fr_2fr_1fr] gap-4 items-end">
+            <div className="relative w-full h-full justify-between grid grid-cols-3 grid-cols-[2fr_2fr_1fr] gap-4 items-end">
 
-                <div id="container-bottom-left" className="h-full w-full flex items-end">
+                <div id="container-bottom-left" className="h-full w-full flex gap-4 items-end overflow-hidden">
                     {currentPlayer && <PlayerStats player={currentPlayer} onPlayerChange={(player: Player) => setCurrentPlayer(player)} />}
-                    <Fronts fronts={fronts} />
                 </div>
 
                 <div id="container-bottom-middle" className="h-1/2">
-
+                    <Fronts fronts={fronts} className='h-full' />
                 </div>
 
                 <div id="container-bottom-right" className="h-full w-full flex items-end">

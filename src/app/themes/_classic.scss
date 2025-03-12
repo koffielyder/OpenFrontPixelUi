@@ -6,6 +6,7 @@
   --border-shadow: none;
   --border-animation: none;
 }
+
 /* Add custom scrollbar styles */
 ::-webkit-scrollbar {
   width: 8px;
@@ -33,10 +34,11 @@
     box-shadow: var(--border-shadow);
     transition: var(--border-animation);
   }
+
   .theme-container {
     @apply bg-gray-900/60 rounded-lg backdrop-blur-md;
   }
-  
+
   .theme-stat-box-base {
     @extend .theme-container;
     @apply items-center p-2 text-center;
@@ -59,3 +61,20 @@
   }
 }
 
+@keyframes pulse-anim {
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.3;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.pulse-red {
+  animation: pulse-anim .5s ease-in-out;
+}

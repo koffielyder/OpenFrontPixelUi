@@ -1,9 +1,14 @@
 export function formatNumber(num: number): string {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    const absNum = Math.abs(num);
+    let formattedNumber: string;
+
+    if (absNum >= 1000000) {
+        formattedNumber = (absNum / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    } else if (absNum >= 1000) {
+        formattedNumber = (absNum / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
     } else {
-        return num.toString();
+        formattedNumber = absNum.toString();
     }
+
+    return num < 0 ? '-' + formattedNumber : formattedNumber;
 }
