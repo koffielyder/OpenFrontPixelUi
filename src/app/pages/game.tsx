@@ -9,7 +9,7 @@ import Dialog from '../components/Dialog';
 import PlayerStats from '../components/PlayerStats';
 import Fronts from '../components/Fronts';
 import EventLog from '../components/EventLog';
-import { get } from 'http';
+import { FrontService } from '../services/FrontService';
 
 interface Request {
     title: string;
@@ -43,36 +43,7 @@ const Game: React.FC = () => {
     const [intervalId, setIntervalId] = React.useState<NodeJS.Timeout | null>(null);
     const [fronts, setFronts] = React.useState<Front[]>([]);
 
-    const generateFront = () => {
-        const player = randomPlayer();
-        const front: Front = {
-            player: player,
-            incoming: getTroopSize(player),
-            outgoing: Math.floor(Math.random() * 100),
-        }
-        setFronts((prevFronts) => [...prevFronts, front]);
-    }
-
-
-
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         setFronts((prevFronts) => prevFronts.map((front) => ({
-    //             ...front,
-    //             incoming: Math.round(Math.max(0, front.incoming *.95)),
-    //             outgoing: Math.round(Math.max(0, front.outgoing *.95)),
-    //         })));
-    //     }, 1000);
-
-    //     return () => clearInterval(interval);
-    // }, []);
-
-    const getTroopSize = (player: Player) => {
-        return player.troops * (player.attackRatio / 100);
-    }
-
-
-
+    const frontService = new FrontService(fronts, setFronts);
 
     const generatePlayers = (amount = 10) => {
         const players: Player[] = [];
@@ -95,7 +66,7 @@ const Game: React.FC = () => {
             }
         }
 
-        const population = Math.floor(Math.random() * (1000000 - 100 + 1)) + 100;
+        const population = Math.floor(Math.random() * (100000 - 100 + 1)) + 100;
         const gold = Math.floor(Math.random() * (1000000 - 100 + 1)) + 100;
         const area = Math.floor(Math.random() * 10);
         const ports = Math.floor(Math.random() * 16);
@@ -158,11 +129,14 @@ const Game: React.FC = () => {
         const parsedEvent = parseEvent(randomEvent);
         setEvents((prevEvents) => [...prevEvents, parsedEvent]);
         setNewEvents((prevNewEvents) => [...prevNewEvents, parsedEvent]);
-
+        if (Math.random() < 0.1) {
+            frontService.generateFront(randomPlayer());
+        }
         // Remove the event after x seconds
         const eventDuration = 5000; // 5 seconds
         setTimeout(() => {
             setNewEvents((prevEvents) => prevEvents.filter(event => event !== parsedEvent));
+
         }, eventDuration);
     };
 
@@ -190,9 +164,22 @@ const Game: React.FC = () => {
         }
     };
 
+    const onFrontChange = (fronts: Front[]) => {
+        console.log(fronts);
+        setFronts(fronts);
+    }
+
     useEffect(() => {
         generatePlayers();
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            frontService.onTick();
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [fronts]);
 
 
     return (
@@ -200,7 +187,7 @@ const Game: React.FC = () => {
             {selectedPlayer && <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full h-full z-20 flex justify-center items-center">
                 {selectedPlayer && <PlayerInfoDialog player={selectedPlayer} open={selectedPlayer !== null} onClose={() => setSelectedPlayer(null)} />}
             </div>}
-            <div className='relative w-full h-full justify-between grid grid-cols-[1fr_2fr_1fr] grid-rows-1 gap-4'>
+            <div className='relative w-full h-full justify-between grid grid-cols-[1fr_2fr_1fr] grid-rows-1 gap-4 overflow-hidden'>
                 <div id='container-top-left' className="h-full w-full">
                     <Dialog>
                         <Table players={dummyPlayers} className='max-h-full' />
@@ -220,29 +207,28 @@ const Game: React.FC = () => {
                         <Button onClick={sendAllianceRequest} className='bg-green-400' >
                             Alliance request
                         </Button>
-
-                        <Button onClick={toggleRandomEvents} className='bg-red-400' >
-                            [{!intervalId ? 'off' : 'on'}] Toggle random events
-                        </Button>
-
                         <Button onClick={selectRandomPlayer}>
                             Open player dialog
                         </Button>
-                        <Button label='generateFront' onClick={generateFront} />
+                        <Button label='generateFront' onClick={() => frontService.generateFront(randomPlayer())} />
+                        <Button onClick={toggleRandomEvents} className={`${intervalId ? 'bg-green-400' : 'bg-red-400'} col-span-2 py-4`} >
+                            [{!intervalId ? 'off' : 'on'}] Toggle simulation
+                        </Button>
                     </div>
                 </div>
             </div>
-            <div className="relative w-full h-full justify-between grid grid-cols-3 grid-cols-[2fr_2fr_1fr] gap-4 items-end">
+            <div className="relative w-full h-full justify-between grid grid-cols-3 grid-cols-[2fr_2fr_1fr] gap-4 items-end overflow-hidden">
 
-                <div id="container-bottom-left" className="h-full w-full flex gap-4 items-end overflow-hidden">
+                <div id="container-bottom-left" className="overflow-hidden h-full w-full flex gap-4 items-end overflow-hidden">
                     {currentPlayer && <PlayerStats player={currentPlayer} onPlayerChange={(player: Player) => setCurrentPlayer(player)} />}
                 </div>
 
-                <div id="container-bottom-middle" className="h-1/2">
-                    <Fronts fronts={fronts} className='h-full' />
+                <div id="container-bottom-middle" className="overflow-hidden h-1/2 flex flex-col justify-end">
+                    <Fronts fronts={fronts} className='h-full' onFrontChange={onFrontChange} frontService={frontService} />
+                    {/* <GridComponent /> */}
                 </div>
 
-                <div id="container-bottom-right" className="h-full w-full flex items-end">
+                <div id="container-bottom-right" className="overflow-hidden h-full w-full flex items-end">
                     <EventLog className='max-h-[40vh] w-full' events={events} newEvents={newEvents} showAll={false} />
                 </div>
             </div>

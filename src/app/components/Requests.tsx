@@ -28,15 +28,14 @@ const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange, cl
     };
 
     return (
-        <div className={`flex flex-col gap-4 w-full ${className}`}>
+        <div className={`flex flex-col gap-4 w-full items-center overflow-auto ${className}`}>
             {currentRequests.map((request, index) => (
                 <UiWindow
                     key={index}
                     startVisible={currentRequests.length === 1}
                     title={request.title}
                     subTitle={request.subTitle}
-                    childClass="max-h-[30vh]"
-                    className={`w-full`}
+                    className={`w-full max-w-[600px] h-max`}
                 >
                     <div className="flex flex-col items-center justify-center gap-4 p-4">
                         <p className="text-white">{request.message}</p>
