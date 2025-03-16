@@ -96,7 +96,7 @@ const Fronts: React.FC<FrontsProps> = ({ className, fronts, onSendTroops }) => {
 
             {updatedFronts.map((front, index) => (
                 <div
-                    key={index}
+                    key={"fronts" + front.id}
                     className={`front theme-container w-[calc(50%-1rem)] 2xl:w-[calc(33.333%-1rem)] max-h-max p-4 flex flex-col items-end gap-2 bg-black/50 ${front.outgoing - front.incoming === 0 ? '' : front.outgoing - front.incoming > 0 ? 'from-blue-600/50 to-blue-600/10 bg-gradient-to-bl' : 'from-red-600/50 to-red-600/10  bg-gradient-to-br' }`}
                 >
                     <div className={`absolute w-full h-full top-0 left-0 bg-red-600 rounded-lg opacity-0 ${pulseIndex === index ? 'pulse-red' : ''}`}>

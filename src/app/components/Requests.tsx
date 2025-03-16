@@ -19,9 +19,9 @@ const Requests: React.FC<RequestsProps> = ({ requests = [], className = "" }) =>
 
     return (
         <div className={`flex flex-col gap-4 w-full items-center overflow-auto ${className}`}>
-            {currentRequests.map((request, index) => (
+            {currentRequests.map(request => (
                 <UiWindow
-                    key={index}
+                    key={"requests" + request.id}
                     startVisible={currentRequests.length === 1}
                     title={request.title}
                     subTitle={request.subTitle}

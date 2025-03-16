@@ -93,7 +93,7 @@ const Game: React.FC = () => {
                 {game && <span>Turn: {game.turn}</span>}
             </div>
             {(game && game.selectedPlayer) && <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-full h-full z-20 flex justify-center items-center">
-                {game.selectedPlayer && <PlayerInfoDialog onRequestAlliance={requestAlliance} player={game.selectedPlayer} alliance={game.alliances.find(a => a.player.id == game.selectedPlayer?.id)} allianceRequest={game.requests.find(req => req.target.id == game.selectedPlayer?.id || req.sender.id == game.selectedPlayer?.id && req.type == 'alliance')} open={game.selectedPlayer !== null} onClose={() => selectPlayer(null)} />}
+                {game.selectedPlayer && <PlayerInfoDialog className='max-w-sm min-w-sm' onRequestAlliance={requestAlliance} player={game.selectedPlayer} alliance={game.alliances.find(a => a.player.id == game.selectedPlayer?.id)} allianceRequest={game.requests.find(req => req.target.id == game.selectedPlayer?.id || req.sender.id == game.selectedPlayer?.id && req.type == 'alliance')} open={game.selectedPlayer !== null} onClose={() => selectPlayer(null)} />}
             </div>}
             {game &&
                 <div className='relative w-full h-full justify-between grid grid-cols-[1fr_2fr_1fr] grid-rows-1 gap-4 overflow-hidden'>

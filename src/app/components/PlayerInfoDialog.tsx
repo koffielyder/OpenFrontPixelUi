@@ -20,44 +20,6 @@ interface PlayerInfoDialogProps {
 
 const PlayerInfoDialog: React.FC<PlayerInfoDialogProps> = ({ open, onClose, player, onRequestAlliance, allianceRequest = null, alliance = null, className = "" }) => {
 
-
-  // const requestAlliance = () => {
-  //   if (player.alliance) {
-  //     player.alliance.pending = true;
-  //   } else {
-  //     player.alliance = { isAlly: false, pending: true, level: 1, gold: 0 };
-  //   }
-  //   setAlliance({ ...player.alliance });
-
-  //   setTimeout(() => {
-  //     if (player.alliance) {
-
-  //       if (Math.random() > 0.1) {
-  //         player.alliance.isAlly = true;
-  //         player.alliance.pending = false;
-  //         player.alliance.isRejected = 0;
-  //         setAlliance({ ...player.alliance });
-  //       } else {
-  //         player.alliance.isAlly = false;
-  //         player.alliance.pending = false;
-  //         player.alliance.isRejected = 5000;
-  //         setAlliance({ ...player.alliance });
-  //         setTimeout(() => {
-  //           if (player.alliance) {
-  //             player.alliance.isRejected = 0;
-  //             setAlliance({ ...player.alliance });
-  //           };
-
-  //         }, player.alliance.isRejected);
-  //       }
-  //     }
-  //   }, 2000);
-  // };
-
-  // useEffect(() => {
-  //   setAlliance(player.alliance);
-  // }, [player]);
-
   return (
     <UiWindow title={player.name} hidable={false} closable={true} isOpen={open} onClose={onClose} className={`bg-transparent ${className}`}>
       <div className="flex flex-col gap-2">

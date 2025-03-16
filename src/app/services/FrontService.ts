@@ -17,7 +17,7 @@ export class FrontService {
         };
         this.fronts = this.fronts.map(front => this.onTickFront(front)).filter(front => !front.idleTime || front.idleTime < 4 && !front.player.isDead);
 
-        if (gameService.game.turn > 3 && Math.random() < 0.3) {
+        if (gameService.game.turn > 3 && Math.random() < 0.2) {
             if (gameService.game.fronts.length < 1) {
                 const randomPlayer = gameService.getCurrentPlayer();
                 if (randomPlayer) this.newFront(randomPlayer);

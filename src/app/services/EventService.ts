@@ -115,7 +115,7 @@ export class EventService {
                 parsedMessage = parsedMessage.replace(regex, String(data[key]));
             }
         }
-        return { ...event, message: parsedMessage };
+        return { ...event, message: parsedMessage, id: generateId() };
     }
 
     returnData = (): object => {

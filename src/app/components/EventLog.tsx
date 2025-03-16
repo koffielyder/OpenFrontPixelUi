@@ -64,6 +64,10 @@ const EventLog: React.FC<EventLogProps> = ({ events = [], newEvents = [], classN
         setShowAll(!shouldShowAll);
     }
 
+    const getEvents = () => {
+        return (shouldShowAll ? events : newEvents).slice(Math.max(newEvents.length - (!shouldShowAll ? 5 : newEvents.length), 0))
+    }
+
     React.useEffect(() => {
         if (!isUserScrolling && eventLogRef.current) {
             eventLogRef.current.scrollTop = eventLogRef.current.scrollHeight;
@@ -78,8 +82,8 @@ const EventLog: React.FC<EventLogProps> = ({ events = [], newEvents = [], classN
                 onScroll={handleScroll}
                 className="flex flex-col gap-3 overflow-auto h-full px-4 relative w-full"
             >
-                {(shouldShowAll ? events : newEvents).slice(Math.max(newEvents.length - (!shouldShowAll ? 5 : newEvents.length), 0)).map((event, index) => (
-                    <p key={index} className={`theme-container px-4 ${getEventClass(event)}`}>
+                {getEvents().map(event => (
+                    <p key={"event-log" + event.id} className={`theme-container px-4 ${getEventClass(event)}`}>
                         {event.message}
                     </p>
                 ))}

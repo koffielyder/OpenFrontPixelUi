@@ -29,7 +29,7 @@ const Table: React.FC<TableProps> = ({ className, bodyClassName, players, allian
                 </thead>
                 <tbody className={bodyClassName + ' text-center'}>
                     {players.filter(p => !p.isDead).sort((a, b) => b.area - a.area).map((player, index) => (
-                        <tr key={index} className={`odd:bg-transparent even:bg-gray-800/50 h-max ${currentPlayerID === player.id && 'font-bold sticky bottom-0 left-0 !bg-gray-800'} ${isAlly(player) ? 'even:!bg-green-500/50 odd:!bg-green-500/30' : ''}`}>
+                        <tr key={"table-" + player.id} className={`odd:bg-transparent even:bg-gray-800/50 h-max ${currentPlayerID === player.id && 'font-bold sticky bottom-0 left-0 !bg-gray-800'} ${isAlly(player) ? 'even:!bg-green-500/50 odd:!bg-green-500/30' : ''}`}>
                             <td className="p-2">{index + 1}</td>
                             <td className="text-left p-2">{player.name}</td>
                             <td className="p-2">{Math.round(player.area)}%</td>
