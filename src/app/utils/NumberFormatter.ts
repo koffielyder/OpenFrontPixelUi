@@ -1,5 +1,5 @@
 export function formatNumber(num: number): string {
-    const absNum = Math.abs(num);
+    const absNum = Math.round(Math.abs(num));
     let formattedNumber: string;
 
     if (absNum >= 1000000) {

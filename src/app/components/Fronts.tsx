@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Front } from '../interfaces/interfaces';
+import { Front, Player } from '../interfaces/interfaces';
 import { formatNumber } from '../utils/NumberFormatter';
-import { FrontService } from '../services/FrontService';
 
 interface FrontsProps {
     className?: string;
     fronts: Front[];
-    frontService: FrontService;
+    onSendTroops?: (front: Front, player: Player | null) => void;
 }
 
-const Fronts: React.FC<FrontsProps> = ({ className, fronts, frontService }) => {
+const Fronts: React.FC<FrontsProps> = ({ className, fronts, onSendTroops }) => {
 
     const [updatedFronts, setUpdatedFronts] = useState<Front[]>(fronts);
     const incomingValuesRef = React.useRef<number[]>(fronts.map(front => front.incoming));
@@ -44,6 +43,23 @@ const Fronts: React.FC<FrontsProps> = ({ className, fronts, frontService }) => {
     //     const randomIndex = Math.floor(Math.random() * fronts.length);
     //     return fronts[randomIndex];
     // }
+
+
+    // const addIncoming = (front: Front) => {
+    //     if(!gameService.frontService) return;
+    //     gameService.frontService.addIncoming(front);
+    // }
+
+    // const addOutgoing = (front: Front) => {
+    //     if(!gameService.frontService) return;
+    //     gameService.outgoingTroops(front);
+    // }
+
+    const handleSendTroops = (front: Front, player: Player | null = null) => {
+        if (onSendTroops) {
+            onSendTroops(front, player);
+        }
+    }
 
     useEffect(() => {
         setUpdatedFronts(fronts);
@@ -98,8 +114,8 @@ const Fronts: React.FC<FrontsProps> = ({ className, fronts, frontService }) => {
                         </div>
                     </div>
                     <div className={`absolute w-full h-full top-0 left-0 bg-white rounded-lg opacity-0 flex z-10`}>
-                        <button className='w-full h-full cursor-pointer' onClick={() => frontService.addOutgoing(front)} />
-                        <button className='w-full h-full cursor-pointer' onClick={() => frontService.addIncoming(front)} />
+                        <button className='w-full h-full cursor-pointer' onClick={() => handleSendTroops(front)} />
+                        <button className='w-full h-full cursor-pointer' onClick={() => handleSendTroops(front, front.player)} />
                     </div>
 
                 </div>

@@ -9,15 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "next": "15.2.1",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sass": "^1.85.1"
+    "sass": "^1.85.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.0.12",
+    "@types/lodash": "^4.17.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

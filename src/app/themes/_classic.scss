@@ -42,6 +42,7 @@
   .theme-stat-box-base {
     @extend .theme-container;
     @apply items-center p-2 text-center;
+    @apply flex-shrink-0 flex-grow-0;
     @apply bg-transparent bg-gradient-to-br from-gray-900/60 via-[var(--tw-gradient-from)] via-[percentage:20%] to-gray-900/50;
   }
 

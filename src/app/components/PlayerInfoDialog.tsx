@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import UiWindow from './UiWindow';
 import Button from './Button';
 import Image from 'next/image';
-import { Player } from '../interfaces/interfaces';
+import { Alliance, GameRequest, Player } from '../interfaces/interfaces';
 import { formatNumber } from '../utils/NumberFormatter';
 
 
@@ -10,56 +10,58 @@ interface PlayerInfoDialogProps {
   open: boolean;
   onClose: () => void;
   player: Player;
-  onChange?: () => void;
   className?: string;
+  allianceRequest?: GameRequest | null;
+  alliance?: Alliance | null;
+  onRequestAlliance: (player: Player) => void;
 }
 
 
 
-const PlayerInfoDialog: React.FC<PlayerInfoDialogProps> = ({ open, onClose, player, className = "" }) => {
-  const [alliance, setAlliance] = React.useState(player.alliance);
+const PlayerInfoDialog: React.FC<PlayerInfoDialogProps> = ({ open, onClose, player, onRequestAlliance, allianceRequest = null, alliance = null, className = "" }) => {
 
-  const requestAlliance = () => {
-    if (player.alliance) {
-      player.alliance.pending = true;
-    } else {
-      player.alliance = { isAlly: false, pending: true, level: 1, gold: 0 };
-    }
-    setAlliance({ ...player.alliance });
 
-    setTimeout(() => {
-      if (player.alliance) {
+  // const requestAlliance = () => {
+  //   if (player.alliance) {
+  //     player.alliance.pending = true;
+  //   } else {
+  //     player.alliance = { isAlly: false, pending: true, level: 1, gold: 0 };
+  //   }
+  //   setAlliance({ ...player.alliance });
 
-        if (Math.random() > 0.1) {
-          player.alliance.isAlly = true;
-          player.alliance.pending = false;
-          player.alliance.isRejected = 0;
-          setAlliance({ ...player.alliance });
-        } else {
-          player.alliance.isAlly = false;
-          player.alliance.pending = false;
-          player.alliance.isRejected = 5000;
-          setAlliance({ ...player.alliance });
-          setTimeout(() => {
-            if (player.alliance) {
-              player.alliance.isRejected = 0;
-              setAlliance({ ...player.alliance });
-            };
+  //   setTimeout(() => {
+  //     if (player.alliance) {
 
-          }, player.alliance.isRejected);
-        }
-      }
-    }, 2000);
-  };
+  //       if (Math.random() > 0.1) {
+  //         player.alliance.isAlly = true;
+  //         player.alliance.pending = false;
+  //         player.alliance.isRejected = 0;
+  //         setAlliance({ ...player.alliance });
+  //       } else {
+  //         player.alliance.isAlly = false;
+  //         player.alliance.pending = false;
+  //         player.alliance.isRejected = 5000;
+  //         setAlliance({ ...player.alliance });
+  //         setTimeout(() => {
+  //           if (player.alliance) {
+  //             player.alliance.isRejected = 0;
+  //             setAlliance({ ...player.alliance });
+  //           };
 
-  useEffect(() => {
-    setAlliance(player.alliance);
-  }, [player]);
+  //         }, player.alliance.isRejected);
+  //       }
+  //     }
+  //   }, 2000);
+  // };
+
+  // useEffect(() => {
+  //   setAlliance(player.alliance);
+  // }, [player]);
 
   return (
     <UiWindow title={player.name} hidable={false} closable={true} isOpen={open} onClose={onClose} className={`bg-transparent ${className}`}>
       <div className="flex flex-col gap-2">
-        {alliance?.isAlly ?
+        {alliance ?
           <div className="flex flex-col bg-green-900/60">
             <div className="flex items-center pt-4 pl-4">
               <span>Alliance</span>
@@ -97,13 +99,13 @@ const PlayerInfoDialog: React.FC<PlayerInfoDialogProps> = ({ open, onClose, play
           </div>
           :
             <div className="flex flex-col p-4 bg-gray-900/60">
-            {!alliance?.pending && !Boolean(alliance?.isRejected) && (
-              <Button label="Request Alliance" onClick={requestAlliance} className="w-full bg-green-500 text-white py-6" tooltip="Request an alliance with the selected player" />
+            {!allianceRequest && (
+              <Button label="Request Alliance" onClick={() => onRequestAlliance(player)} className="w-full bg-green-500 text-white py-6" tooltip="Request an alliance with the selected player" />
             )}
-            {alliance?.pending && (
+            {allianceRequest && !allianceRequest.isRejected && (
               <Button label="Pending Request" onClick={() => { }} className="w-full bg-green-500 text-white py-6 disabled" tooltip="Request is pending" />
             )}
-            {Boolean(alliance?.isRejected) && (
+            {allianceRequest && allianceRequest.isRejected && (
               <Button label="Alliance Rejected" onClick={() => { }} className="w-full !bg-red-500 text-white py-6 disabled" tooltip="Request was rejected" />
             )}
             </div>

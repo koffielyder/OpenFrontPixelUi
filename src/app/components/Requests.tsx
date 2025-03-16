@@ -1,31 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import UiWindow from './UiWindow';
 import Button from './Button';
+import { GameRequest } from '../interfaces/interfaces';
 
-interface Request {
-    title: string;
-    subTitle: string;
-    message: string;
-}
 
 interface RequestsProps {
-    requests: Request[];
-    onRequestsChange: (newRequests: Request[]) => void;
+    requests: GameRequest[];
     className?: string;
 }
 
-const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange, className = "" }) => {
+const Requests: React.FC<RequestsProps> = ({ requests = [], className = "" }) => {
     const [currentRequests, setCurrentRequests] = useState(requests);
 
     useEffect(() => {
         setCurrentRequests(requests);
     }, [requests]);
 
-    const handleRemoveRequest = (index: number) => {
-        const newRequests = currentRequests.filter((_, i) => i !== index);
-        setCurrentRequests(newRequests);
-        onRequestsChange(newRequests);
-    };
 
     return (
         <div className={`flex flex-col gap-4 w-full items-center overflow-auto ${className}`}>
@@ -44,12 +34,12 @@ const Requests: React.FC<RequestsProps> = ({ requests = [], onRequestsChange, cl
                             <Button
                                 label="Accept"
                                 className="w-3/8 bg-green-500 text-white"
-                                onClick={() => handleRemoveRequest(index)}
+                                onClick={request.onAccept}
                             />
                             <Button
                                 label="Decline"
                                 className="w-3/8 bg-red-500 text-white"
-                                onClick={() => handleRemoveRequest(index)}
+                                onClick={request.onReject}
                             />
                         </div>
                     </div>

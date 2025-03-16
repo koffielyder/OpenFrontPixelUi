@@ -4,10 +4,9 @@ import { formatNumber } from '../utils/NumberFormatter';
 
 interface PlayerStatsProps {
     player: Player,
-    onPlayerChange: (player: Player) => void
 }
 
-const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => {
+const PlayerStats: React.FC<PlayerStatsProps> = ({ player }) => {
     const [attackRatio, setAttackRatio] = useState(player.attackRatio);
     const [troopRatio, setTroopRatio] = useState(100);
     const [currentPlayer, setCurrentPlayer] = useState(player);
@@ -20,7 +19,6 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
     const handleAttackRatioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         player.attackRatio = value;
-        onPlayerChange(player);
         setCurrentPlayer(player)
         setAttackRatio(player.attackRatio);
     };
@@ -31,7 +29,7 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
     }, [player])
 
     return (
-        <div id="player-stats" className='flex flex-col gap-4 max-w-sm'>
+        <div id="player-stats" className='flex flex-col gap-4 w-full max-w-sm'>
             <div className="gap-4 w-full grid grid-cols-4">
                 <div className='theme-stat-box px-4 !from-cyan-900/60'>
                     <div className='flex flex-col items-center text-center'>
@@ -39,8 +37,8 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
                         <span className='text-xs text-green-600'>+150</span>
                     </div>
                     <span className="bg-white h-[1px] opacity-30 w-3/4 mx-auto"></span>
-                    <div className='flex flex-col items-center'>
-                        <span className=''>{formatNumber(currentPlayer.population)}</span>
+                    <div className='flex flex-col items-center flex-shrink-0 flex-grow-0'>
+                        <span className='flex flex-shrink-0 flex-grow-0'>{formatNumber(currentPlayer.population)}</span>
                         <span className='text-xs text-right'>/ {formatNumber(currentPlayer.maxPopulation)}</span>
                     </div>
                 </div>
@@ -63,8 +61,8 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
                     <span>{currentPlayer.cities}</span>
                 </div>
             </div>
-            <div className='theme-container'>
-                <div className='p-4 flex flex-col w-full gap-2'>
+            <div className='theme-container '>
+                <div className='p-4 flex flex-col w-full gap-2 flex-shrink-0 flex-grow-0'>
                     <div className='w-full grid grid-cols-5'>
                         <span className='text-left'>{formatNumber((currentPlayer.population / 100) * (100 - troopRatio))}</span>
                         <span className='text-left'>Workers</span>
@@ -76,7 +74,7 @@ const PlayerStats: React.FC<PlayerStatsProps> = ({ player, onPlayerChange }) => 
                     </div>
             </div>
 
-            <div className='theme-container'>
+            <div className='theme-container flex-shrink-0 flex-grow-0'>
                 <div className='flex flex-col w-full gap-2 p-4'>
                     <div className='w-full flex justify-between'>
                         <div>
