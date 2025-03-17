@@ -30,7 +30,7 @@ const Dialog: React.FC<DialogProps> = ({ className, children, openLabel = 'show'
     const resetStyles = (onAnimationFrame: FrameRequestCallback | null | boolean = null) => {
         if (dialogRef.current) {
             const resetStyle: React.CSSProperties = {
-                opacity: 1,
+                opacity: 0,
                 pointerEvents: 'all',
                 maxWidth: '',
                 maxHeight: '',
@@ -38,8 +38,8 @@ const Dialog: React.FC<DialogProps> = ({ className, children, openLabel = 'show'
             };
 
             Object.assign(dialogRef.current.style, resetStyle);
-            if(onAnimationFrame) {
-                let callback: FrameRequestCallback = () => {};
+            if (onAnimationFrame) {
+                let callback: FrameRequestCallback = () => { };
                 if (typeof onAnimationFrame === 'function') {
                     callback = onAnimationFrame;
                 }
@@ -50,18 +50,17 @@ const Dialog: React.FC<DialogProps> = ({ className, children, openLabel = 'show'
 
     const updateDimensions = () => {
         if (dialogRef.current) {
-            
+
             resetStyles(() => {
                 const { offsetWidth, offsetHeight } = dialogRef.current!;
                 console.log(`Width: ${offsetWidth}, Height: ${offsetHeight}`);
                 const resetStyle: React.CSSProperties = {
-                    opacity: 1,
                     pointerEvents: 'all',
                     maxWidth: `${offsetWidth}px`,
                     maxHeight: `${offsetHeight}px`,
-                    transition: toggleAnimationClasses.transition
+                    transition: 'none'
                 };
-                if(dialogRef.current) {
+                if (dialogRef.current) {
                     Object.assign(dialogRef.current.style, resetStyle);
                     setOriginalMaxHeight(`${offsetHeight}px`);
                     setOriginalMaxWidth(`${offsetWidth}px`);
@@ -69,6 +68,17 @@ const Dialog: React.FC<DialogProps> = ({ className, children, openLabel = 'show'
 
                 // Run the next function after styles are applied
                 nextFunction();
+                requestAnimationFrame(() => {
+                    if (dialogRef.current) {
+                        Object.assign(dialogRef.current.style, { opacity: 1 });
+                        requestAnimationFrame(() => {
+                            if (dialogRef.current) {
+                                Object.assign(dialogRef.current.style, { transition: toggleAnimationClasses.transition });
+                            }
+                        });
+                    }
+                });
+
             });
             // Wait for the next animation frame to ensure styles are applied
         }
@@ -91,8 +101,6 @@ const Dialog: React.FC<DialogProps> = ({ className, children, openLabel = 'show'
 
     useEffect(() => {
         updateDimensions(); // Get dimensions after rendering
-
-
         window.addEventListener('resize', handleResize);
         return () => {
             window.removeEventListener('resize', handleResize);
