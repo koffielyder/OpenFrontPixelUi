@@ -28,8 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased w-screen h-screen`}
       >
-        <Image src="/ofimage.jpg" width={2000} height={2000} className="fixed top-0 left-0 h-full w-full scale-150 -z-10" alt="image" />
-        <div className="relative z-10 p-4 h-full w-full">
+        <Image src="/ofimage.jpg" width={2000} height={2000} className="fixed top-0 left-0 h-full w-full scale-150 -z-10 object-cover" alt="image" />
+        <div className="relative z-10 p-2 md:p-4 h-full w-full">
           {children}
         </div>
       </body>

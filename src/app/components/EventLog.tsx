@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Event } from '../interfaces/interfaces';
 
 interface EventLogProps {
@@ -60,12 +60,8 @@ const EventLog: React.FC<EventLogProps> = ({ events = [], newEvents = [], classN
         }
     };
 
-    const toggleShowAll = () => {
-        setShowAll(!shouldShowAll);
-    }
-
     const getEvents = () => {
-        return (shouldShowAll ? events : newEvents).slice(Math.max(newEvents.length - (!shouldShowAll ? 5 : newEvents.length), 0))
+        return (shouldShowAll ? events : newEvents).slice(Math.max(newEvents.length - (!shouldShowAll ? 3 : newEvents.length), 0))
     }
 
     React.useEffect(() => {
@@ -74,13 +70,17 @@ const EventLog: React.FC<EventLogProps> = ({ events = [], newEvents = [], classN
         }
     }, [events, isUserScrolling]);
 
+    useEffect(() => {
+        setShowAll(showAll);
+    }, [showAll]);
+
 
     return (
-        <div className={`relative flex flex-col gap-2 ${className}`}>
+        <div className={`relative flex flex-col-reverse md:flex-col gap-2 ${className}`}>
             <div
                 ref={eventLogRef}
                 onScroll={handleScroll}
-                className="flex flex-col gap-3 overflow-auto h-full px-4 relative w-full"
+                className="flex flex-col gap-3 overflow-auto h-full md:px-4 relative w-full"
             >
                 {getEvents().map(event => (
                     <p key={"event-log" + event.id} className={`theme-container px-4 ${getEventClass(event)}`}>
@@ -88,7 +88,7 @@ const EventLog: React.FC<EventLogProps> = ({ events = [], newEvents = [], classN
                     </p>
                 ))}
             </div>
-            <button className='text-right' onClick={toggleShowAll}>{shouldShowAll ? 'Hide' : 'Show event log'}</button>
+            {/* <button className='text-right' onClick={toggleShowAll}>{shouldShowAll ? 'Hide' : 'Show event log'}</button> */}
         </div>
     );
 };

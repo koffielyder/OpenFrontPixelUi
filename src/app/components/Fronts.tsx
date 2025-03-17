@@ -92,25 +92,25 @@ const Fronts: React.FC<FrontsProps> = ({ className, fronts, onSendTroops }) => {
     }, [updatedFronts]);
 
     return (
-        <div className={`flex-1 overflow-auto flex-wrap-reverse flex flex-wrap gap-4 justify-start items-start max-h-full h-max ${className}`}>
+        <div className={`overflow-auto flex-wrap-reverse 2xl:flex grid grid-cols-2 gap-2 2xl:gap-4 justify-start items-start h-full md:h-max ${className}`}>
 
             {updatedFronts.map((front, index) => (
                 <div
                     key={"fronts" + front.id}
-                    className={`front theme-container w-[calc(50%-1rem)] 2xl:w-[calc(33.333%-1rem)] max-h-max p-4 flex flex-col items-end gap-2 bg-black/50 ${front.outgoing - front.incoming === 0 ? '' : front.outgoing - front.incoming > 0 ? 'from-blue-600/50 to-blue-600/10 bg-gradient-to-bl' : 'from-red-600/50 to-red-600/10  bg-gradient-to-br' }`}
+                    className={`front theme-container w-full 2xl:w-[calc(50%-1rem)] 2xl:w-[calc(33.333%-1rem)] max-h-max p-2 px-4 2xl:p-4 flex flex-col items-end gap-2 bg-black/50 ${front.outgoing - front.incoming === 0 ? '' : front.outgoing - front.incoming > 0 ? 'from-blue-600/50 to-blue-600/10 bg-gradient-to-bl' : 'from-red-600/50 to-red-600/10  bg-gradient-to-br' }`}
                 >
                     <div className={`absolute w-full h-full top-0 left-0 bg-red-600 rounded-lg opacity-0 ${pulseIndex === index ? 'pulse-red' : ''}`}>
                     </div>
 
-                    <div className='z-10 w-full flex flex-col items-end gap-2'>
-                        <h3 className='truncate w-full text-sm text-right'>{front.player.name}</h3>
-                        <span className="w-full h-[1px] bg-white opacity-30"></span>
-                        <div className='grid grid-cols-3 text-center w-full gap-8 relative'>
-                            <span className="text-blue-500">{formatNumber(front.outgoing)}</span>
+                    <div className='z-10 w-full flex md:flex-col items-end gap-2 justify-between items-center text-sm 2xl:text-base'>
+                        <h3 className='truncate w-full text-sm 2xl:text-right'>{front.player.name}</h3>
+                        <span className="w-full h-[1px] bg-white opacity-30 hidden 2xl:flex"></span>
+                        <div className='grid 2xl:grid-cols-3 text-center 2xl:w-full gap-8 relative'>
+                            <span className="text-blue-500 hidden 2xl:flex">{formatNumber(front.outgoing)}</span>
                             <span className={`${front.outgoing - front.incoming > 0 ? 'text-green-500' : front.outgoing - front.incoming < 0 ? 'text-red-500' : 'text-gray-500'}`}>
                                 {formatNumber(front.outgoing - front.incoming)}
                             </span>
-                            <span className="text-red-500">{formatNumber(front.incoming)}</span>
+                            <span className="text-red-500 hidden 2xl:fle">{formatNumber(front.incoming)}</span>
                         </div>
                     </div>
                     <div className={`absolute w-full h-full top-0 left-0 bg-white rounded-lg opacity-0 flex z-10`}>

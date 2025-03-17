@@ -18,23 +18,21 @@ const Table: React.FC<TableProps> = ({ className, bodyClassName, players, allian
     return (
         <div className={`theme-scrollbar h-full flex flex-col overflow-y-auto ${className}`}>
             <table className={`w-full relative text-left h-full max-h-max`}>
-                <thead className='w-full sticky top-0 left-0'>
+                <thead className='w-full sticky top-0 left-0 z-20'>
                     <tr className="bg-gray-800/50">
-                        <th className=""><span className='w-full flex border-black border-b-2 p-2'>Rank</span></th>
-                        <th className=""><span className='w-full flex border-black border-b-2 p-2'>Name</span></th>
-                        <th className=""><span className='w-full flex border-black border-b-2 p-2'>Owned</span></th>
-                        <th className=""><span className='w-full flex border-black border-b-2 p-2'>Gold</span></th>
-                        <th className=""><span className='w-full flex border-black border-b-2 p-2'>Troops</span></th>
+                        <th className=""><span className='w-full flex border-black border-b-2 p-1 py-2 md:p-2'>Rank</span></th>
+                        <th className=""><span className='w-full flex border-black border-b-2 p-1 py-2 md:p-2'>Name</span></th>
+                        <th className=""><span className='w-full flex border-black border-b-2 p-1 py-2 md:p-2'>Owned</span></th>
+                        <th className=""><span className='w-full flex border-black border-b-2 p-1 py-2 md:p-2'>Gold</span></th>
                     </tr>
                 </thead>
                 <tbody className={bodyClassName + ' text-center'}>
                     {players.filter(p => !p.isDead).sort((a, b) => b.area - a.area).map((player, index) => (
                         <tr key={"table-" + player.id} className={`odd:bg-transparent even:bg-gray-800/50 h-max ${currentPlayerID === player.id && 'font-bold sticky bottom-0 left-0 !bg-gray-800'} ${isAlly(player) ? 'even:!bg-green-500/50 odd:!bg-green-500/30' : ''}`}>
-                            <td className="p-2">{index + 1}</td>
-                            <td className="text-left p-2">{player.name}</td>
-                            <td className="p-2">{Math.round(player.area)}%</td>
-                            <td className="p-2">{formatNumber(player.gold)}</td>
-                            <td className="p-2">{formatNumber(player.troops)}</td>
+                            <td className="p-1 py-2 md:p-2">{index + 1}</td>
+                            <td className="text-left p-1 py-2 md:p-2">{player.name}</td>
+                            <td className="p-1 py-2 md:p-2">{Math.round(player.area)}%</td>
+                            <td className="p-1 py-2 md:p-2">{formatNumber(player.gold)}</td>
                         </tr>
                     ))}
                 </tbody>

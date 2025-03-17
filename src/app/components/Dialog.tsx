@@ -3,9 +3,12 @@ import React, { useEffect, useRef, useState } from 'react';
 interface DialogProps {
     className?: string;
     children: React.ReactNode;
+    openLabel?: string;
+    closeLabel?: string;
+    startCollapsed?: boolean;
 }
 
-const Dialog: React.FC<DialogProps> = ({ className, children }) => {
+const Dialog: React.FC<DialogProps> = ({ className, children, openLabel = 'show', closeLabel = 'hide', startCollapsed = true }) => {
     const initStyle: React.CSSProperties = {
         opacity: 0,
         pointerEvents: 'none'
@@ -89,12 +92,25 @@ const Dialog: React.FC<DialogProps> = ({ className, children }) => {
     useEffect(() => {
         updateDimensions(); // Get dimensions after rendering
 
+
         window.addEventListener('resize', handleResize);
         return () => {
             window.removeEventListener('resize', handleResize);
             clearTimeout(resizeTimeout);
         };
     }, []);
+
+    useEffect(() => {
+        if (startCollapsed) {
+            if (dialogRef.current && originalMaxHeight && originalMaxWidth) {
+                setIsCollapsed(true);
+                if (buttonRef.current) {
+                    dialogRef.current.style.maxHeight = `${buttonRef.current.offsetHeight}px`;
+                    dialogRef.current.style.maxWidth = `${buttonRef.current.offsetWidth}px`;
+                }
+            }
+        }
+    }, [originalMaxHeight, originalMaxWidth, startCollapsed]);
 
     const toggleCollapse = () => {
         if (dialogRef.current && originalMaxHeight && originalMaxWidth) {
@@ -110,7 +126,7 @@ const Dialog: React.FC<DialogProps> = ({ className, children }) => {
         <div className={`max-h-full max-w-full h-full w-full theme-container flex flex-col ${toggleAnimationClasses} ${className}`} style={initStyle} ref={dialogRef}>
             <button className='flex justify-center' onClick={toggleCollapse}>
                 <span className='py-2 px-8 w-max flex' ref={buttonRef}>
-                    {isCollapsed ? 'Leaderboard' : 'Collapse'}
+                    {isCollapsed ? openLabel : closeLabel}
                 </span>
             </button>
             <div className="flex flex-col gap-2 flex-grow overflow-hidden">
